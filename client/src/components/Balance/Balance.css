@@ -1,0 +1,12 @@
+.balance {
+  width : 50%;
+  border: 3px solid #00a399;
+  background-color: rgba(0, 163, 153, 0.5);
+  border-radius: 15px;
+  color : white;
+  font-size : 30px;
+  font-weight : bold;
+  padding : 40px 40px 40px 40px;
+  margin : 0 auto;
+  white-space: pre;
+}

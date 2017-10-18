@@ -8,9 +8,9 @@ export default class Chooser extends Component {
     super(props)
     this.state = { txsSelected : true, bcSelected : false}
 
-    this.onClick = this.onClick.bind(this)
+    this.changeMode = this.changeMode.bind(this)
   }
-  onClick(e){
+  changeMode(e){
 
     e.preventDefault()
 
@@ -20,9 +20,10 @@ export default class Chooser extends Component {
     if((id === "txs" && txsSelected) || (id === "bc" && bcSelected)){
       return
     }
-
+    let mode = (id === "txs")?"transactions":"balance"
+    this.props.onChangeMode(mode)
     this.setState({txsSelected : !txsSelected, bcSelected : !bcSelected})
-    
+
   }
   render(){
     const { txsSelected, bcSelected } = this.state
@@ -31,10 +32,10 @@ export default class Chooser extends Component {
     let secondClass = bcSelected?"option selected":"option"
     return (
       <div className="wrapper">
-        <div id="txs" className={firstClass} onClick={this.onClick}>
+        <div id="txs" className={firstClass} onClick={this.changeMode}>
           Transactions
         </div>
-        <div id="bc" className={secondClass} onClick={this.onClick}>
+        <div id="bc" className={secondClass} onClick={this.changeMode}>
           Balance
         </div>
       </div>

@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 //Components
 import Chooser from '../Chooser/Chooser'
 import Transactions from '../Transactions/Transactions'
+import Balance from '../Balance/Balance'
 //Styles
 import './App.css'
 //Constants
@@ -16,61 +17,78 @@ export default class App extends Component {
 
     this.state = {
       address : "",
+      mode : "transactions",
+      balance : 0,
       loading : false,
       txs : []
     }
     this.selectAddress = this.selectAddress.bind(this)
-    this.onChoose = this.onChoose.bind(this)
+    this.onChangeMode = this.onChangeMode.bind(this)
+    this.fetchWithMode = this.fetchWithMode.bind(this)
   }
 
   selectAddress(event){
     event.preventDefault()
     const { _address } = this.refs
+    const { txs } = this.state
+
     this.setState({
       address : _address.value,
       loading: true
     })
 
-    this.setState({loading : true})
-
-    fetch(`/${_address.value}/transactions`)
-      .then(res=>res.json())
-      .then(result=>{
-            this.setState({loading : false, txs : result.txs})
-      })
-      .catch(e=>console.log(e))
+    this.fetchWithMode(_address.value,txs)
   }
 
-  onChoose(mode){
+  fetchWithMode(address, txs, mode="transactions", hash=""){
 
-    const { address } = this.state
-    
-    this.setState({loading : true})
+    let base = `/${address}/${mode}`
+    let apiPath = (hash.length > 0)?`${base}?blockHash=${hash}`:base
 
-    fetch(`/${address}/${mode}`)
+    console.log(`fetchWithMode with uri : ${apiPath}`)
+
+    fetch(apiPath)
       .then(res=>res.json())
       .then(result=>{
-
+            console.log(`fetch Responded with mode ${mode} and trancated = ${result.truncated} with blockHash : ${result.hash}`)
             if(mode === "transactions"){
-              this.setState({loading : false, txs : result.txs})
+
+               const newTxs = [...txs, ...result.txs]
+              //  arr1.concat(arr2)
+              if(result.truncated){
+                this.fetchWithMode(address,newTxs,mode,result.hash)
+              }else{
+                this.setState({loading : false, txs : newTxs})
+              }
+
             }else if(mode === "balance"){
-              this.setState({loading : false, balance : result})
+
+              (result.truncated)?this.fetchWithMode(address,txs,mode,result.hash):
+                                  this.setState({loading : false, balance : result.balance})
+
             }
 
       })
-      .catch(e=>console.log(e))
+      .catch(e=>console.log(e.message))
+  }
 
+  onChangeMode(mode){
+    const { address } = this.state
+    this.setState({loading : true, mode : mode})
+    this.fetchWithMode(address,mode)
   }
 
   render() {
 
-    const { loading, txs } = this.state
+    const { mode, address, loading, txs, balance } = this.state
 
-    let loader
-    if(loading){
-      loader = <div className="loader"></div>
-    }
+    let loaderComp = (loading)?<div className="loader"></div>:<div></div>
 
+    let balanceComp = (mode === "balance" && loading === false)?<Balance balance={balance}/>:<div></div>
+
+    let txsComp = (mode === "transactions" && loading === false)?<Transactions txs={txs}/>:<div></div>
+
+    let chooserComp = (address.length > 0)?<Chooser onChangeMode={this.onChangeMode}/>:<div></div>
     return (
           <div>
             <div className="container">
@@ -78,9 +96,10 @@ export default class App extends Component {
               <form onSubmit={this.selectAddress}>
                 <input ref="_address" className="search" placeholder="Search" type="text"/>
               </form>
-              {loader}
-              <Chooser onChoose={this.onChoose}/>
-              <Transactions txs={txs}/>
+              {chooserComp}
+              {loaderComp}
+              {balanceComp}
+              {txsComp}
             </div>
           </div>
   )
