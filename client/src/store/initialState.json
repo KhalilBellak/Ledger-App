@@ -6,5 +6,6 @@
   "txs" : [],
   "balanceInitialized" : false,
   "txsInitialized" : false,
-  "mode" : "transactions"
+  "mode" : "transactions",
+  "error" : null
 }

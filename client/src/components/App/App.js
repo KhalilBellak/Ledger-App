@@ -4,8 +4,17 @@ import React, { Component } from 'react'
 import Chooser from '../Chooser/Chooser'
 import Transactions from '../Transactions/Transactions'
 import Balance from '../Balance/Balance'
+import Error from '../Error/Error'
 //Actions
-import { selectAddressWithMode, setTransactions, setBalance, changeMode } from '../../store/actions'
+import {
+  selectAddressWithMode,
+  setTransactions,
+  setBalance,
+  changeMode,
+  showError,
+  hideError
+} from '../../store/actions'
+
 //Styles
 import './App.css'
 //Constants
@@ -78,7 +87,7 @@ export default class App extends Component {
         }
 
       })
-      .catch(e => console.log(e.message))
+      .catch(e => this.props.store.dispatch(showError(e)))
   }
 
   onChangeMode(mode) {
@@ -113,17 +122,23 @@ export default class App extends Component {
       address,
       loading,
       txs,
-      balance
+      balance,
+      error
     } = store.getState()
+
+    let isFailed = (error !== null)
 
     let loaderComp = (loading)?<div className="loader"></div>:<div></div>
 
-    let balanceComp = (mode === "balance" && loading === false)?<Balance balance={balance}/>:<div></div>
+    let showBalance = (mode === "balance" && !loading && !isFailed)
+    let balanceComp = showBalance?<Balance balance={balance}/>:<div></div>
 
-    let txsComp = (mode === "transactions" && loading === false)?<Transactions address={address} txs={txs}/>:<div></div>
+    let showTxs = (mode === "transactions" && !loading && !isFailed)
+    let txsComp = showTxs?<Transactions address={address} txs={txs}/>:<div></div>
 
-    let chooserComp = (address.length > 0)?<Chooser mode={mode} onChangeMode={this.onChangeMode}/>:<div></div>
+    let chooserComp = (address.length > 0 && !isFailed)?<Chooser mode={mode} onChangeMode={this.onChangeMode}/>:<div></div>
 
+    let errorComp = isFailed?<Error error={error}/>:<div></div>
     return (
           <div className="parent-container">
             <div className="container">
@@ -134,6 +149,7 @@ export default class App extends Component {
               {chooserComp}
               {loaderComp}
               {balanceComp}
+              {errorComp}
             </div>
 
             <div className="table-container">

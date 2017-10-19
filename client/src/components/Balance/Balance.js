@@ -1,8 +1,8 @@
 //React
-import React, { Component } from 'react'
+import React from 'react'
 //Styles
 import './Balance.css'
 
-export const Balance = ({balance})=><div className="balance">Balance : {balance}</div>
+const Balance = ({balance})=><div className="balance">Balance : {balance}</div>
 
 export default Balance

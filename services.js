@@ -1,6 +1,6 @@
 const rp = require('request-promise')
 const apiConfig = require('./config/api.config')
-
+var colors = require('colors');
 
 const url = `${apiConfig.url}/${apiConfig.version}/${apiConfig.bitcoinAlias}`
 const proxiedURL = `${apiConfig.proxy}/${url}`
@@ -133,9 +133,9 @@ const requestWithOptions = (req, res, next)=>{
 							next(res,formatedTxs,hash,result.truncated,btcAddress,iBalance)
 						}
 					})
-					.catch(e=>console.log(e.message))
+					.catch(e=>console.log(colors.red(e.message)))
 	})
-	.catch(e=>console.log(e.message))
+	.catch(e=>console.log(colors.red(e.message)))
 }
 
 module.exports = {

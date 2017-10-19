@@ -1,5 +1,7 @@
 const express = require('express')
 const myRouter = require('./controller')
+var colors = require('colors');
+
 const port = '3001'
 const host = 'localhost'
 /*
@@ -14,5 +16,5 @@ app.use(myRouter)
   Listen on port 3001
 */
 app.listen(port, host, ()=> {
-	console.log('\x1b[32m%s\x1b[0m ', "Server Listening on port 3001")
+	console.log(colors.green("Server Listening on port 3001"))
 })

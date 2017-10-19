@@ -13,7 +13,8 @@ export const dataReducer = (state = {}, action) => {
           loading : true,
           txs : [],
           balanceInitialized : (action.mode === "balance"),
-          txsInitialized : (action.mode === "transactions")
+          txsInitialized : (action.mode === "transactions"),
+          error : null
         }
     case C.actions.SET_TRANSACTIONS:
       return {
