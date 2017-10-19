@@ -42,6 +42,7 @@ const generateTxsRows = (address,txs)=>{
     }):<div></div>
   )
 }
+
 export const Transactions = ({ address, txs })=>(
   <div>
     <ul className="list">

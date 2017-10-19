@@ -121,7 +121,7 @@ export default class App extends Component {
 
     let txsComp = (mode === "transactions" && loading === false)?<Transactions address={address} txs={txs}/>:<div></div>
 
-    let chooserComp = (address.length > 0)?<Chooser onChangeMode={this.onChangeMode}/>:<div></div>
+    let chooserComp = (address.length > 0)?<Chooser mode={mode} onChangeMode={this.onChangeMode}/>:<div></div>
 
     return (
           <div>

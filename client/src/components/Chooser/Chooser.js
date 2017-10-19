@@ -7,28 +7,27 @@ export default class Chooser extends Component {
 
   constructor(props){
     super(props)
-    this.state = { txsSelected : true, bcSelected : false}
     this.changeMode = this.changeMode.bind(this)
   }
 
   changeMode(e){
-
+    const { mode } = this.props
     e.preventDefault()
-
     const id = e.target.id
-    const { txsSelected, bcSelected } = this.state
+    const txsSelected = (mode === "transactions"), bcSelected = (mode === "balance")
 
     if((id === "txs" && txsSelected) || (id === "bc" && bcSelected)){
       return
     }
-    let mode = (id === "txs")?"transactions":"balance"
-    this.props.onChangeMode(mode)
-    this.setState({txsSelected : !txsSelected, bcSelected : !bcSelected})
 
+    let newMode = (id === "txs")?"transactions":"balance"
+    this.props.onChangeMode(newMode)
   }
-  
+
   render(){
-    const { txsSelected, bcSelected } = this.state
+
+    const { mode } = this.props
+    const txsSelected = (mode === "transactions"), bcSelected = (mode === "balance")
 
     let firstClass = txsSelected?"option selected":"option"
     let secondClass = bcSelected?"option selected":"option"
