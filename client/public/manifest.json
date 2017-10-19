@@ -1,6 +1,6 @@
 {
-  "short_name": "DataHaïku App",
-  "name": "React App for DataHaïku",
+  "short_name": "Ledger App",
+  "name": "React App for Ledger",
   "icons": [
     {
       "src": "favicon.png",

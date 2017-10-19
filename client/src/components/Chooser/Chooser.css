@@ -1,11 +1,11 @@
 .wrapper {
   display: table;
-  table-layout: fixed;
-  width : 100%;
   justify-content: center;
+  margin-top: 30px;
+  padding: 20px 0px 20px 0px;
+  table-layout: fixed;
   text-align: center;
-  padding : 20px 0px 20px 0px;
-  margin-top : 30px;
+  width: 100%;
 }
 
 .option {
@@ -13,17 +13,17 @@
   border-radius: 4px;
   box-sizing: border-box;
   color: #3db29e;
-  text-align: center;
   display: table-cell;
   padding: 20px 0px 20px 0px;
+  text-align: center;
 }
 
 .selected {
-  color : #FFFFFF;
-    border: 3px solid #3db29e;
-    background-color: #3db29e;
+  border: 3px solid #3db29e;
+  background-color: #3db29e;
+  color: #FFFFFF;
 }
 
-.option:hover{
+.option:hover {
   border: 3px solid rgba(61, 178, 158, 0.75);
 }

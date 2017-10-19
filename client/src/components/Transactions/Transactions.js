@@ -1,11 +1,10 @@
 import React,{ Component } from 'react'
 import './Transactions.css'
 
-const showInputsOutputs = false
 export default class Transactions extends Component {
 
   generateTxsRows(address,txs){
-    console.log(txs.length)
+
     return(
       (txs.length > 0)?
       txs.map((tx,index)=>{
@@ -17,10 +16,6 @@ export default class Transactions extends Component {
           outputs = tx.outputs.map((out,id)=>{
             if(address === out.address)
               totalOutputs += out.value
-            if(showInputsOutputs){
-              return (<div id="output" key={id} className="details item-div">{out.address}</div>)
-            }
-            return <div key={id}></div>
           })
         }
 
@@ -28,12 +23,9 @@ export default class Transactions extends Component {
           inputs = tx.inputs.map((input,id)=>{
             if(address === input.address)
               totalInputs += input.value
-              if(showInputsOutputs){
-                return (<div id="input" key={id} className="details item-div">{input.address}</div>)
-              }
-              return <div key={id}></div>
           })
         }
+
         let amount = (totalOutputs - totalInputs)/100000000
         let idAmount = (amount > 0)?"output":"input"
 
@@ -46,7 +38,7 @@ export default class Transactions extends Component {
             <div id={idAmount} className="details">{amount}</div>
             {outputs}
             {inputs}
-            </li>
+          </li>
         )
       }):<div></div>
     )

@@ -4,21 +4,21 @@ div .list {
 }
 
 .list {
-  display : block;
-  padding: 5px;
-  list-style: none;
-  margin: 0;
   color: #000000;
+  display: block;
   font-size: 15px;
   font-weight: 400;
   line-height: 1.5;
+  list-style: none;
+  margin: 0;
+  padding: 5px;
 }
 
 .item {
   border-bottom: 2px solid #ddd;
+  display: list-item;
   overflow: auto;
   padding: 20px;
-  display : list-item;
 }
 
 .item-div {
@@ -30,15 +30,14 @@ div .list {
   font-size: 13px;
   font-weight: bold;
   float: left;
-
 }
 
 .details {
-  font-size: 12px;
   border-radius: 5px;
-  color : white;
-  width : 10%;
+  color: white;
+  font-size: 12px;
   overflow: auto;
+  width: 10%;
 }
 
 .date {
@@ -48,17 +47,18 @@ div .list {
   font-weight: bold;
   float: right;
   line-height: 1.5;
-
 }
+
 .header-amount {
   overflow: auto;
-	width: 100%
+  width: 100%
   /*display : inline-table;*/
 }
+
 .amount {
   border-radius: 10px;
-  color : white;
-  width : 15%;
+  color: white;
+  width: 15%;
 }
 
 #output {
@@ -66,6 +66,7 @@ div .list {
   border: 3px solid #00a399;
   color: #00a399;
 }
+
 #input {
   background-color: rgba(255, 0, 0, 0.5);
   border: 3px solid red;

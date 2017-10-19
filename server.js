@@ -12,32 +12,13 @@ const host = 'localhost'
 
 var balance = 0
 
-const dumpConsole = (txs)=>{
-	const tmp = txs.slice(0,10)
-	tmp.map(tx=>{
-		console.log("-------------------")
-		console.log(`---------${tx.hash}--------`)
-		if(tx.inputs !== undefined)
-		console.log(`Outputs of length : ${tx.inputs.length}`)
-		if(tx.outputs !== undefined)
-		console.log(`Inputs of length : ${tx.outputs.length}`)
-		console.log("-------------------")
-	})
-}
-
 /*
   QuickSort by date (received_at property) in case received txs not sorted ascendant (from old to new)
 */
 const sortByDate = (txs,start,end)=>{
 	if(txs.length - 1 < start || start < 0 || txs.length - 1 < end || end < 0)
 		return
-		//console.log(`-----------------------------------------`)
-		console.log(`sortByDate with length ${txs.length} start ${start} end ${end}`)
-		// console.log(`First : ${start}`)
-		// console.log(txs[start]['received_at'])
-		// console.log(`Middle : ${Math.round((start + end)/2)}`)
-		// console.log(txs[Math.round((start + end)/2)]['received_at'])
-		//console.log(`-----------------------------------------`)
+
 	let first = txs[start]['received_at'],
 				second = txs[end]['received_at']
 
@@ -75,7 +56,7 @@ const sortByDate = (txs,start,end)=>{
 	if(end < firstId){
 		sortByDate(txs,firstId,end)
 	}
-	
+
 }
 
 /*
@@ -136,11 +117,11 @@ const requestWithOptions = (req, res, next)=>{
 				 json: true
 			 };
 
-			 console.log(`Request with uri: ${realUri}`)
+			 //console.log(`Request with uri: ${realUri}`)
 
 			 rp(txsReqOption)
 					.then(result=>{
-						console.log(`Is truncated ${result.truncated}`)
+
 						let txs = result.txs
 						const length = txs.length
 

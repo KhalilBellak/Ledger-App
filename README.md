@@ -1,27 +1,21 @@
-# Datahaïku Test App 
+# Ledger Test App
 
-Test app where we display data from SQLite database deployed on a localhost server
+Test app where we display transactions and balance of a giving address
 
 ## Tech Stack
 
-* [ReactJS](https://reactjs.org/) 
-* [D3](https://d3js.org/)
+* [ReactJS](https://reactjs.org/)
 * [Node.js](https://nodejs.org/en/)
-* [Express](http://expressjs.com/) 
-* [SQLite](https://sqlite.org/)
+* [Express](http://expressjs.com/)
 
 
-## Data 
+## Server
 
-First unzip, in the same directory, the provided database "us-census.db.gz" located in "client/data".
-
-## Server 
-
-On a first terminal window : 
+On a first terminal window :
 
 ### Install dependencies
 
-From project's directory install server's dependencies: 
+From project's directory install server's dependencies:
 
 ```
 npm install
@@ -29,7 +23,7 @@ npm install
 
 ### Run Server
 
-Run server on localhost:3001/ 
+Run server on localhost:3001/
 
 ```
 node serve.js
@@ -59,4 +53,3 @@ Run the application on localhost:3000/
 ```
 npm start
 ```
-
