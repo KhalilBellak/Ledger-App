@@ -1,22 +1,15 @@
 const express = require('express')
-const myRouter = require('./controller.js')
+const myRouter = require('./controller')
 const port = '3001'
 const host = 'localhost'
-
 /*
   Create server
 */
 const app = express();
 /*
-  Use router
-*/
-
-
-/*
   Use Router
 */
 app.use(myRouter)
-
 /*
   Listen on port 3001
 */
