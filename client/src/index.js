@@ -16,6 +16,7 @@ import initialStateData from './store/initialState'
 */
 const store = storeFactory(initialStateData)
 
+
 /*
   Reander root component
 */

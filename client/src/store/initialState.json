@@ -1,3 +1,10 @@
 {
-
+  "address" : "",
+  "mode" : "transactions",
+  "balance" : 0,
+  "loading" : false,
+  "txs" : [],
+  "balanceInitialized" : false,
+  "txsInitialized" : false,
+  "mode" : "transactions"
 }

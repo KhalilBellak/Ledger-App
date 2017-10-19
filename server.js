@@ -12,8 +12,6 @@ const host = 'localhost'
 
 var balance = 0
 
-let toDump = true
-
 const dumpConsole = (txs)=>{
 	const tmp = txs.slice(0,10)
 	tmp.map(tx=>{
@@ -27,20 +25,6 @@ const dumpConsole = (txs)=>{
 	})
 }
 
-const swapElements =  (txs,first,second) => {
-	if(txs.length > first && first >= 0 &&
-			txs.length > second && second >= 0 ){
-				const tmp = txs[first]
-				txs[first] = null
-				txs[first] = {
-					hash : txs[first].hash,
-					received_at : tx.received_at,
-					outputs : tx.outputs,
-					inputs : tx.inputs
-				}
-			}
-
-}
 /*
   QuickSort by date (received_at property) in case received txs not sorted ascendant (from old to new)
 */
@@ -91,7 +75,7 @@ const sortByDate = (txs,start,end)=>{
 	if(end < firstId){
 		sortByDate(txs,firstId,end)
 	}
-
+	
 }
 
 /*
