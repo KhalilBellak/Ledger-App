@@ -4,10 +4,10 @@ div .list {
 }
 
 .list {
-  padding: 0;
+  display : block;
+  padding: 5px;
   list-style: none;
   margin: 0;
-  display: block;
   color: #000000;
   font-size: 15px;
   font-weight: 400;
@@ -18,23 +18,27 @@ div .list {
   border-bottom: 2px solid #ddd;
   overflow: auto;
   padding: 20px;
-  display: list-item;
+  display : list-item;
 }
 
 .item-div {
   color: #000000;
-  display: inline-block;
-  float: left;
   width: 70%;
 }
 
 .title {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: bold;
+  float: left;
+
 }
 
 .details {
-  font-size: 14px;
+  font-size: 12px;
+  border-radius: 5px;
+  color : white;
+  width : 10%;
+  overflow: auto;
 }
 
 .date {
@@ -44,10 +48,26 @@ div .list {
   font-weight: bold;
   float: right;
   line-height: 1.5;
+
 }
+.header-amount {
+  overflow: auto;
+	width: 100%
+  /*display : inline-table;*/
+}
+.amount {
+  border-radius: 10px;
+  color : white;
+  width : 15%;
+}
+
 #output {
+  background-color: rgba(0, 163, 153, 0.5);
+  border: 3px solid #00a399;
   color: #00a399;
 }
 #input {
+  background-color: rgba(255, 0, 0, 0.5);
+  border: 3px solid red;
   color: red;
 }

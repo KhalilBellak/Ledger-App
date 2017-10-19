@@ -10,7 +10,37 @@ const proxiedURL = `${apiConfig.proxy}/${url}`
 const port = '3001'
 const host = 'localhost'
 
+var balance = 0
 
+let toDump = true
+
+const dumpConsole = (txs)=>{
+	const tmp = txs.slice(0,10)
+	tmp.map(tx=>{
+		console.log("-------------------")
+		console.log(`---------${tx.hash}--------`)
+		if(tx.inputs !== undefined)
+		console.log(`Outputs of length : ${tx.inputs.length}`)
+		if(tx.outputs !== undefined)
+		console.log(`Inputs of length : ${tx.outputs.length}`)
+		console.log("-------------------")
+	})
+}
+
+const swapElements =  (txs,first,second) => {
+	if(txs.length > first && first >= 0 &&
+			txs.length > second && second >= 0 ){
+				const tmp = txs[first]
+				txs[first] = null
+				txs[first] = {
+					hash : txs[first].hash,
+					received_at : tx.received_at,
+					outputs : tx.outputs,
+					inputs : tx.inputs
+				}
+			}
+
+}
 /*
   QuickSort by date (received_at property) in case received txs not sorted ascendant (from old to new)
 */
@@ -18,7 +48,7 @@ const sortByDate = (txs,start,end)=>{
 	if(txs.length - 1 < start || start < 0 || txs.length - 1 < end || end < 0)
 		return
 		//console.log(`-----------------------------------------`)
-		//console.log(`sortByDate with length ${txs.length} start ${start} end ${end}`)
+		console.log(`sortByDate with length ${txs.length} start ${start} end ${end}`)
 		// console.log(`First : ${start}`)
 		// console.log(txs[start]['received_at'])
 		// console.log(`Middle : ${Math.round((start + end)/2)}`)
@@ -44,9 +74,11 @@ const sortByDate = (txs,start,end)=>{
 		}
 
 		if(firstId <= secondId){
+
 			const tmp = txs[firstId]
 			txs[firstId] = txs[secondId]
 			txs[secondId] = tmp
+
 			firstId++
 			secondId--
 		}
@@ -66,141 +98,108 @@ const sortByDate = (txs,start,end)=>{
   Create server
 */
 const app = express();
-
-
 /*
   Use router
 */
 var myRouter = express.Router();
+
+const getTransactions = (res,txs,hash,truncated)=>{
+ response = {
+	 txs : txs,
+	 hash : hash,
+	 truncated : truncated
+ }
+ res.json(response)
+}
+
+const getBalance = (res,txs,hash,truncated,btcAddress)=>{
+
+		txs.map(tx => {
+			if(tx.inputs !== undefined){
+				tx.inputs.map(input=>(btcAddress === input.address)?balance -= input.value:balance)
+			}
+			if(tx.outputs !== undefined){
+				tx.outputs.map(output=>(btcAddress === output.address)?balance += output.value:balance)
+			}
+		})
+
+		res.json({balance, truncated, hash})
+}
+const requestWithOptions = (req, res, next)=>{
+
+	let btcAddress = req.params.btcAddress
+	let blockHash = req.query.blockHash
+
+	var tokenReqOptions = {
+		method: 'GET',
+		uri: `${url}/${apiConfig.token}`,
+		json: true
+	};
+
+	rp(tokenReqOptions)
+	.then(response=>{
+
+			 let uri = `${url}/addresses/${btcAddress}/transactions`
+			 let realUri = (blockHash !== undefined && blockHash.length > 0)?`${uri}?blockHash=${blockHash}`:uri
+
+			 var txsReqOption = {
+				 method: 'GET',
+				 uri: realUri,
+				 headers: {
+					 //'User-Agent': 'Request-Promise',
+					 "X-LedgerWallet-SyncToken":`${response.token}`
+				 },
+				 json: true
+			 };
+
+			 console.log(`Request with uri: ${realUri}`)
+
+			 rp(txsReqOption)
+					.then(result=>{
+						console.log(`Is truncated ${result.truncated}`)
+						let txs = result.txs
+						const length = txs.length
+
+						let response
+
+						if(length > 0){
+
+							let indexWithBlock = 0
+
+							const formatedTxs = txs.map((tx,index) =>({
+										hash : tx.hash,
+										received_at : tx.received_at,
+										outputs : tx.outputs,
+										inputs : tx.inputs,
+										block : tx.block
+									})
+								)
+
+						 sortByDate(formatedTxs,0,formatedTxs.length - 1)
+
+							const block = formatedTxs[0].block
+							const hash = ( block !== undefined)?`${block.hash}`:""
+
+							next(res,formatedTxs,hash,result.truncated,btcAddress)
+						}
+					})
+					.catch(e=>console.log(e.message))
+	})
+	.catch(e=>console.log(e.message))
+}
 
 /*
 
 */
 myRouter.route('/:btcAddress/transactions')
 		.get((req, res)=>{
-
-			 let btcAddress = req.params.btcAddress
-			 let blockHash = req.query.blockHash
-
-			 var tokenReqOptions = {
-				 method: 'GET',
-				 uri: `${url}/${apiConfig.token}`,
-				 json: true
-			 };
-
-			 rp(tokenReqOptions)
-       .then(response=>{
-
-				 		let uri = `${url}/addresses/${btcAddress}/transactions`
-						let realUri = (blockHash !== undefined && blockHash.length > 0)?`${uri}?blockHash=${blockHash}`:uri
-
-						var txsReqOption = {
-							method: 'GET',
-						  uri: realUri,
-						  headers: {
-						    //'User-Agent': 'Request-Promise',
-								"X-LedgerWallet-SyncToken":`${response.token}`
-						  },
-						  json: true
-						};
-
-						console.log(`Request with uri: ${realUri}`)
-
-						rp(txsReqOption)
-               .then(result=>{
-
-								 //TODO : Sort by date and send only useful data (take into account truncated txs)
-								 console.log(`Is Truncated : ${result.truncated}`)
-
-								 let txs = result.txs
-								 const length = txs.length
-
-								 let response
-
-								 if(length > 0){
-
-									sortByDate(txs,0,txs.length - 1)
-
-									 const block = txs[0].block
-									 const hash = ( block !== undefined)?`${block.hash}`:""
-
-									 const formatedTxs = []
-									 txs.map(tx =>formatedTxs.push({
-												 hash : tx.hash,
-												 received_at : tx.received_at,
-												 outputs : tx.outputs,
-												 inputs : tx.inputs
-											 })
-										 )
-										 
-									response = {
-										txs : formatedTxs,
-										hash : hash,
-										truncated : result.truncated
-									}
-									//console.log(response)
-								 }
-								 return response
-               })
-							 .then(response => res.json(response))
-               .catch(e=>console.log(e.message))
-       })
-       .catch(e=>console.log(e.message))
+			requestWithOptions(req,res,getTransactions)
 })
 
 
 myRouter.route('/:btcAddress/balance')
 		.get((req, res)=>{
-			//rp(`${proxiedURL}/${apiConfig.token}`)
-			let btcAddress = req.params.btcAddress
-
-			var tokenReqOptions = {
-				method: 'GET',
-				uri: `${url}/${apiConfig.token}`,
-				json: true
-			};
-
-			rp(tokenReqOptions)
-			.then(response=>{
-
-				let blockHash = req.query.blockHash
-				console.log("BlockHash")
-				console.log(blockHash)
-				let uri = `${url}/addresses/${btcAddress}/transactions`
-				let realUri = (blockHash.length > 0)?`${uri}?blockHash=${blockHash}`:uri
-
-					 var txsReqOption = {
-						 method: 'GET',
-						 uri: realUri,
-						 headers: {
-							 //'User-Agent': 'Request-Promise',
-							 "X-LedgerWallet-SyncToken":`${response.token}`
-						 },
-						 json: true
-					 };
-
-					 rp(txsReqOption)
-							.then(result=>{
-								//console.log(result.truncated)
-								//TODO : Compute Balance (find txs where address is in output and input)
-								let balance = 0
-								result.txs.map(tx => {
-									if(tx.inputs !== undefined){
-										tx.inputs.map(input=>(btcAddress === input.address)?balance -= input.value:balance)
-									}
-									if(tx.outputs !== undefined){
-										tx.outputs.map(output=>(btcAddress === output.address)?balance += output.value:balance)
-									}
-								})
-								if(txs.truncated){
-
-								}
-								res.json({balance, truncated})
-							})
-							.catch(e=>console.log(e.message))
-			})
-			.catch(e=>console.log(e.message))
-
+			requestWithOptions(req,res,getBalance)
 })
 
 /*
