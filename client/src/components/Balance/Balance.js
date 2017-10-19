@@ -1,12 +1,8 @@
 //React
 import React, { Component } from 'react'
+//Styles
 import './Balance.css'
 
-export default class Balance extends Component {
-  render(){
-    return (
-      <div className="balance">Final Balance : {this.props.balance}</div>
-    )
-  }
+export const Balance = ({balance})=><div className="balance">Final Balance : {balance}</div>
 
-}
+export default Balance

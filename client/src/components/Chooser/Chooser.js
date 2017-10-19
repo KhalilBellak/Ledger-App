@@ -1,15 +1,16 @@
+//React
 import React,{ Component } from 'react'
+//Styles
 import './Chooser.css'
 
 export default class Chooser extends Component {
 
   constructor(props){
-
     super(props)
     this.state = { txsSelected : true, bcSelected : false}
-
     this.changeMode = this.changeMode.bind(this)
   }
+
   changeMode(e){
 
     e.preventDefault()
@@ -25,6 +26,7 @@ export default class Chooser extends Component {
     this.setState({txsSelected : !txsSelected, bcSelected : !bcSelected})
 
   }
+  
   render(){
     const { txsSelected, bcSelected } = this.state
 
