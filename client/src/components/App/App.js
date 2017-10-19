@@ -124,15 +124,18 @@ export default class App extends Component {
     let chooserComp = (address.length > 0)?<Chooser mode={mode} onChangeMode={this.onChangeMode}/>:<div></div>
 
     return (
-          <div>
+          <div className="parent-container">
             <div className="container">
-              <h1>Enter your Bitcoin address :</h1>
+              <h1>Ledger's Application :</h1>
               <form onSubmit={this.selectAddress}>
-                <input ref="_address" className="search" placeholder="Search" type="text"/>
+                <input ref="_address" className="search" placeholder="Enter a Bitcoin's address ..." type="text"/>
               </form>
               {chooserComp}
               {loaderComp}
               {balanceComp}
+            </div>
+
+            <div className="table-container">
               {txsComp}
             </div>
           </div>
