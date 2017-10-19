@@ -48,11 +48,12 @@ export default class App extends Component {
     this.fetchWithMode(txAddress,[],mode)
   }
 
-  fetchWithMode(address, txs, mode = "transactions", hash = "") {
+  fetchWithMode(address, txs, mode = "transactions", hash = "", balance = 0) {
 
     let base = `/${address}/${mode}`
-    let apiPath = (hash.length > 0) ? `${base}?blockHash=${hash}` : base
+    let apiPath = (hash.length > 0) ? `${base}?blockHash=${hash}&balance=${balance}` : base
 
+    //console.log(`fetchWithMode with balance : ${balance} and path ${apiPath}`)
     fetch(apiPath)
       .then(res => res.json())
       .then(result => {
@@ -70,7 +71,7 @@ export default class App extends Component {
         } else if (mode === "balance") {
 
           if (result.truncated) {
-            this.fetchWithMode(address, txs, mode, result.hash)
+            this.fetchWithMode(address, txs, mode, result.hash,result.balance)
           } else {
             this.props.store.dispatch(setBalance(result.balance))
           }
@@ -126,7 +127,7 @@ export default class App extends Component {
     return (
           <div className="parent-container">
             <div className="container">
-              <h1>Ledger's Application :</h1>
+              <h1>Ledger App :</h1>
               <form onSubmit={this.selectAddress}>
                 <input ref="_address" className="search" placeholder="Enter a Bitcoin's address ..." type="text"/>
               </form>
