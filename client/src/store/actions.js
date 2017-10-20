@@ -36,3 +36,15 @@ export const showError = error=>(
   }
 )
 export const hideError = () =>({type : C.actions.HIDE_ERROR})
+
+/*
+  Go Top Button's actions
+*/
+export const showGoTopButton = error=>({type : C.actions.SHOW_GOTOP})
+export const hideGoTopButton = () =>({type : C.actions.HIDE_GOTOP})
+export const goTop = intervalId=>(
+  {
+    type : C.actions.GOTOP,
+    intervalId
+  }
+)

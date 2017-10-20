@@ -41,13 +41,31 @@ export const dataReducer = (state = {}, action) => {
     case C.actions.SHOW_ERROR:
       return {
         ...initialStateData,
-        error : action.error,
+        error : action.error
       }
     case C.actions.HIDE_ERROR:
       return {
         ...state,
         error : {}
       }
+    case C.actions.SHOW_GOTOP:
+        return {
+          ...state,
+          goTopButtonOn : true,
+          goTop : false
+        }
+    case C.actions.HIDE_GOTOP:
+        return {
+          ...state,
+          goTopButtonOn : false
+        }
+    case C.actions.GOTOP:
+        return {
+          ...state,
+          goTop : true,
+          goTopButtonOn : false,
+          intervalId : action.intervalId
+        }
     default:
       return state
   }

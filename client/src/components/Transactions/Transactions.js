@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import './Transactions.css'
 
 
@@ -43,11 +43,15 @@ const generateTxsRows = (address,txs)=>{
   )
 }
 
-export const Transactions = ({ address, txs })=>(
-  <div>
-    <ul className="list">
-      {generateTxsRows(address,txs)}
-    </ul>
-  </div>
-)
-export default Transactions
+export default class Transactions extends Component {
+  render(){
+    const { address, txs, onScroll} = this.props
+    return(
+      <div className="table-container" onScroll={onScroll}>
+        <ul className="list">
+          {generateTxsRows(address,txs)}
+        </ul>
+      </div>
+    )
+  }
+}

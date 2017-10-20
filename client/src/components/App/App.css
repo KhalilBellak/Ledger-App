@@ -11,12 +11,6 @@ input {
   text-align: center;
 }
 
-.table-container{
-  height : calc(100% - 40%);
-  overflow-y: auto;
-  text-align: center;
-}
-
 .search {
   border: 2px solid #D3D3D3;
   border-radius: 30px;

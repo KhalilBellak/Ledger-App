@@ -1,10 +1,12 @@
 //React
 import React, { Component } from 'react'
+import ReactDOM from 'react-dom';
 //Components
 import Chooser from '../Chooser/Chooser'
 import Transactions from '../Transactions/Transactions'
 import Balance from '../Balance/Balance'
 import Error from '../Error/Error'
+import GoTopButton from '../GoTopButton/GoTopButton'
 //Actions
 import {
   selectAddressWithMode,
@@ -12,7 +14,10 @@ import {
   setBalance,
   changeMode,
   showError,
-  hideError
+  hideError,
+  showGoTopButton,
+  hideGoTopButton,
+  goTop
 } from '../../store/actions'
 
 //Styles
@@ -26,8 +31,11 @@ export default class App extends Component {
   constructor(props){
     super(props)
     this.selectAddress = this.selectAddress.bind(this)
-    this.onChangeMode = this.onChangeMode.bind(this)
     this.fetchWithMode = this.fetchWithMode.bind(this)
+    this.onChangeMode = this.onChangeMode.bind(this)
+    this.onScrollTable = this.onScrollTable.bind(this)
+    this.goTopTable = this.goTopTable.bind(this)
+    this.scrollByStep = this.scrollByStep.bind(this)
   }
 
   componentWillMount(){
@@ -113,6 +121,43 @@ export default class App extends Component {
 
   }
 
+  onScrollTable(e){
+
+    const store = this.props.store
+    const { goTopButtonOn } = store.getState()
+
+    e.preventDefault()
+
+    if(e.target.scrollTop > 0 && !goTopButtonOn){
+      store.dispatch(showGoTopButton())
+    }else if(e.target.scrollTop === 0 && goTopButtonOn){
+      store.dispatch(hideGoTopButton())
+    }
+
+  }
+
+  goTopTable(){
+    const store = this.props.store
+
+    const intervalId = setInterval(this.scrollByStep,C.scrollTopTick)
+    store.dispatch(goTop(intervalId))
+  }
+
+  scrollByStep(){
+    console.log("scrollByStep")
+    const store = this.props.store
+    let tableNode = ReactDOM.findDOMNode(this.refs._txs)
+    const scrollY = tableNode.scrollTop
+
+    if( scrollY > 0){
+      const step = (scrollY*C.scrollTopTick)/C.scrollTopDuration
+      tableNode.scrollTop = (scrollY > step)?(scrollY - step):0
+    }else{
+      clearInterval(store.getState().intervalId)
+    }
+    
+  }
+
   render() {
 
     const { store } = this.props
@@ -123,22 +168,27 @@ export default class App extends Component {
       loading,
       txs,
       balance,
-      error
+      error,
+      goTopButtonOn,
+      goTop
     } = store.getState()
 
-    let isFailed = (error !== null)
+    const isFailed = (error !== null)
 
-    let loaderComp = (loading)?<div className="loader"></div>:<div></div>
+    const goTopComp = (goTopButtonOn)?<GoTopButton onGoTop={this.goTopTable}/>:<div></div>
 
-    let showBalance = (mode === "balance" && !loading && !isFailed)
-    let balanceComp = showBalance?<Balance balance={balance}/>:<div></div>
+    const loaderComp = (loading)?<div className="loader"></div>:<div></div>
 
-    let showTxs = (mode === "transactions" && !loading && !isFailed)
-    let txsComp = showTxs?<Transactions address={address} txs={txs}/>:<div></div>
+    const showBalance = (mode === "balance" && !loading && !isFailed)
+    const balanceComp = showBalance?<Balance balance={balance}/>:<div></div>
 
-    let chooserComp = (address.length > 0 && !isFailed)?<Chooser mode={mode} onChangeMode={this.onChangeMode}/>:<div></div>
+    const showTxs = (mode === "transactions" && !loading && !isFailed)
+    const txsComp = showTxs?<Transactions ref="_txs" address={address} txs={txs} onScroll={this.onScrollTable} goTop={goTop}/>:<div></div>
 
-    let errorComp = isFailed?<Error error={error}/>:<div></div>
+    const chooserComp = (address.length > 0 && !isFailed)?<Chooser mode={mode} onChangeMode={this.onChangeMode}/>:<div></div>
+
+    const errorComp = isFailed?<Error error={error}/>:<div></div>
+
     return (
           <div className="parent-container">
             <div className="container">
@@ -151,10 +201,8 @@ export default class App extends Component {
               {balanceComp}
               {errorComp}
             </div>
-
-            <div className="table-container">
               {txsComp}
-            </div>
+              {goTopComp}
           </div>
     )
   }
