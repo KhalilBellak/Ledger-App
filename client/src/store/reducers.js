@@ -36,17 +36,13 @@ export const dataReducer = (state = {}, action) => {
         mode : action.mode,
         loading : action.loading,
         balanceInitialized : true,
-        txsInitialized : true
+        txsInitialized : true,
+        goTopButtonOn : false
       }
     case C.actions.SHOW_ERROR:
       return {
         ...initialStateData,
         error : action.error
-      }
-    case C.actions.HIDE_ERROR:
-      return {
-        ...state,
-        error : {}
       }
     case C.actions.SHOW_GOTOP:
         return {

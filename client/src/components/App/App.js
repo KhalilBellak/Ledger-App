@@ -14,7 +14,6 @@ import {
   setBalance,
   changeMode,
   showError,
-  hideError,
   showGoTopButton,
   hideGoTopButton,
   goTop
@@ -25,7 +24,9 @@ import './App.css'
 //Constants
 import C  from '../../constants.js'
 
-
+/*
+  Root Component
+*/
 export default class App extends Component {
 
   constructor(props){
@@ -38,23 +39,35 @@ export default class App extends Component {
     this.scrollByStep = this.scrollByStep.bind(this)
   }
 
+  /*
+    Subscribe from store
+  */
   componentWillMount(){
     this.unsubscribe = this.props.store.subscribe(()=>this.forceUpdate())
   }
-
+  /*
+    Unsubscribe from store
+  */
   componentWillUnmount(){
     this.unsubscribe()
   }
 
-  selectAddress(event){
+  /*
+    Triggered by "input" element when submitting a Bitcoin's Address
+    e : event
+  */
+  selectAddress(e){
 
-    event.preventDefault()
+    e.preventDefault()
 
     const store = this.props.store
 
     const { _address } = this.refs
     const { mode } = store.getState()
+
+    //Get rid of spaces at begining and end
     const txAddress = _address.value.trim()
+
     const payload = {
       address : txAddress,
       mode : mode
@@ -62,19 +75,29 @@ export default class App extends Component {
 
     store.dispatch(selectAddressWithMode(payload))
 
+    //Call to server
     this.fetchWithMode(txAddress,[],mode)
   }
 
+  /*
+    Call to server, recursively if truncated = true
+    address : current address,
+    txs : current transactions,
+    mode : current mode,
+    hash : current hash,
+    balance : current balance
+  */
   fetchWithMode(address, txs, mode = "transactions", hash = "", balance = 0) {
 
+    //Get api path to call
     let base = `/${address}/${mode}`
-    let apiPath = (hash.length > 0) ? `${base}?blockHash=${hash}&balance=${balance}` : base
+    let apiPath = (hash.length > 0) ? `${base}?blockHash=${hash}&balance=${balance}`:base
 
-    //console.log(`fetchWithMode with balance : ${balance} and path ${apiPath}`)
     fetch(apiPath)
       .then(res => res.json())
       .then(result => {
 
+        //In transaction mode we concatenate txs
         if (mode === "transactions") {
 
           const newTxs = [...result.txs, ...txs]
@@ -85,7 +108,7 @@ export default class App extends Component {
             this.props.store.dispatch(setTransactions(newTxs))
           }
 
-        } else if (mode === "balance") {
+        } else if (mode === "balance") { //In balance mode we accumulate balance
 
           if (result.truncated) {
             this.fetchWithMode(address, txs, mode, result.hash,result.balance)
@@ -93,12 +116,15 @@ export default class App extends Component {
             this.props.store.dispatch(setBalance(result.balance))
           }
         }
-
       })
       .catch(e => this.props.store.dispatch(showError(e)))
   }
-
-  onChangeMode(mode) {
+  /*
+    Triggered by Chooser component when changing mode
+    Allow changing components to display (txs or balance)
+    selectedMode : selected mode
+  */
+  onChangeMode(selectedMode) {
 
     const {
       address,
@@ -107,20 +133,30 @@ export default class App extends Component {
       txsInitialized
     } = this.props.store.getState()
 
-    const toFetch = ((mode === "transactions" && !txsInitialized) ||
-      (mode === "balance" && !balanceInitialized))
+    /*
+      We fetch only if we change mode (currentMode != selectedMode),
+      and only if it's the first time we run the fetch for selectedMode
+    */
+    const toFetch = ((selectedMode === "transactions" && !txsInitialized) ||
+      (selectedMode === "balance" && !balanceInitialized))
 
     this.props.store.dispatch(changeMode({
-      mode,
+      mode : selectedMode,
       loading: toFetch
     }))
 
     if (toFetch) {
-      this.fetchWithMode(address, txs, mode)
+
+      this.fetchWithMode(address, txs, selectedMode)
     }
 
   }
 
+  /*
+    Triggered when Transactions is scrolled
+    Helps to show/hide go to top button
+    e : event
+  */
   onScrollTable(e){
 
     const store = this.props.store
@@ -135,16 +171,21 @@ export default class App extends Component {
     }
 
   }
-
+  /*
+    Triggered when GoTopButton is clicked on
+    Helps to scroll Transactions to top
+  */
   goTopTable(){
     const store = this.props.store
 
     const intervalId = setInterval(this.scrollByStep,C.scrollTopTick)
     store.dispatch(goTop(intervalId))
   }
-
+  /*
+    Fired by setInterval to have a smooth scroll
+  */
   scrollByStep(){
-    console.log("scrollByStep")
+
     const store = this.props.store
     let tableNode = ReactDOM.findDOMNode(this.refs._txs)
     const scrollY = tableNode.scrollTop
@@ -155,7 +196,7 @@ export default class App extends Component {
     }else{
       clearInterval(store.getState().intervalId)
     }
-    
+
   }
 
   render() {
@@ -183,9 +224,11 @@ export default class App extends Component {
     const balanceComp = showBalance?<Balance balance={balance}/>:<div></div>
 
     const showTxs = (mode === "transactions" && !loading && !isFailed)
-    const txsComp = showTxs?<Transactions ref="_txs" address={address} txs={txs} onScroll={this.onScrollTable} goTop={goTop}/>:<div></div>
+    const txsComp = showTxs?<Transactions ref="_txs" address={address} txs={txs} onScroll={this.onScrollTable}/>:<div></div>
 
     const chooserComp = (address.length > 0 && !isFailed)?<Chooser mode={mode} onChangeMode={this.onChangeMode}/>:<div></div>
+
+
 
     const errorComp = isFailed?<Error error={error}/>:<div></div>
 

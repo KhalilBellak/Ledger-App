@@ -14,12 +14,18 @@ export const changeMode = ({mode,loading})=>(
     loading
   }
 )
+/*
+  Transactions
+*/
 export const setTransactions = txs=>(
   {
     type : C.actions.SET_TRANSACTIONS,
     txs
   }
 )
+/*
+  Balance
+*/
 export const setBalance = balance=>(
   {
     type : C.actions.SET_BALANCE,
@@ -35,8 +41,6 @@ export const showError = error=>(
     error
   }
 )
-export const hideError = () =>({type : C.actions.HIDE_ERROR})
-
 /*
   Go Top Button's actions
 */

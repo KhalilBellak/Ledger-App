@@ -3,6 +3,9 @@ import React,{ Component } from 'react'
 //Styles
 import './Chooser.css'
 
+/*
+  Chooser Component: allows to switch between transaction and balance mode
+*/
 export default class Chooser extends Component {
 
   constructor(props){
@@ -10,16 +13,14 @@ export default class Chooser extends Component {
     this.changeMode = this.changeMode.bind(this)
   }
 
+  /*
+    Triggered when clicking on txs or bc divs
+    e : event
+  */
   changeMode(e){
     const { mode } = this.props
     e.preventDefault()
     const id = e.target.id
-    const txsSelected = (mode === "transactions"), bcSelected = (mode === "balance")
-
-    if((id === "txs" && txsSelected) || (id === "bc" && bcSelected)){
-      return
-    }
-
     let newMode = (id === "txs")?"transactions":"balance"
     this.props.onChangeMode(newMode)
   }
