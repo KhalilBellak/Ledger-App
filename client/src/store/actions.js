@@ -1,5 +1,8 @@
 import C from '../constants'
 
+/*
+  Selection of new address
+*/
 export const selectAddressWithMode = ({address,mode})=>(
   {
     type : C.actions.SELECT_ADDRESS,
@@ -7,6 +10,9 @@ export const selectAddressWithMode = ({address,mode})=>(
     mode
   }
 )
+/*
+  Switch of mode
+*/
 export const changeMode = ({mode,loading})=>(
   {
     type : C.actions.CHANGE_MODE,
@@ -15,7 +21,7 @@ export const changeMode = ({mode,loading})=>(
   }
 )
 /*
-  Transactions
+  New transactions received
 */
 export const setTransactions = txs=>(
   {
@@ -24,7 +30,7 @@ export const setTransactions = txs=>(
   }
 )
 /*
-  Balance
+  New balance received
 */
 export const setBalance = balance=>(
   {
@@ -33,7 +39,7 @@ export const setBalance = balance=>(
   }
 )
 /*
-  Dialog Error's actions
+  Error occurs
 */
 export const showError = error=>(
   {

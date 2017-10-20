@@ -18,7 +18,7 @@ const store = storeFactory(initialStateData)
 
 
 /*
-  Reander root component
+  Render root component
 */
 ReactDOM.render(<App store={store}/>,document.getElementById('root'));
 registerServiceWorker();

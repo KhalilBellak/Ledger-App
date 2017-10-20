@@ -1,6 +1,13 @@
 import React, {Component} from 'react'
 import './Transactions.css'
 
+/*
+  Method to generate all rows with their balances
+  address : current address, to compare with adresses of outputs/inputs
+            compute balance
+  txs : transactions
+  @return : return all rows (JSX elements)
+*/
 
 const generateTxsRows = (address,txs)=>{
   return(
@@ -43,6 +50,12 @@ const generateTxsRows = (address,txs)=>{
   )
 }
 
+/*
+  Transactions Component : list all transactions with their hashes, balances and dates
+  address : current Bitcoin's address
+  txs : current transactions,
+  onScroll : callback to notify GoTopButton to show/hide
+*/
 export default class Transactions extends Component {
   render(){
     const { address, txs, onScroll} = this.props
