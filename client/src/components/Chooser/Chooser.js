@@ -1,5 +1,6 @@
 //React
 import React,{ Component } from 'react'
+import Proptypes from 'prop-types'
 //Styles
 import './Chooser.css'
 
@@ -42,4 +43,13 @@ export default class Chooser extends Component {
       </div>
     )
   }
+}
+
+Chooser.propTypes = {
+  mode : Proptypes.string,
+  onChangeMode : Proptypes.func
+}
+Chooser.defaultProps = {
+  mode : "transactions",
+  onChangeMode : e=>e
 }

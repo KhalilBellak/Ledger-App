@@ -1,4 +1,7 @@
+//React
 import React, {Component} from 'react'
+import Proptypes from 'prop-types'
+//Styles
 import './Transactions.css'
 
 /*
@@ -18,16 +21,18 @@ const generateTxsRows = (address,txs)=>{
       let totalOutputs = 0, totalInputs = 0
 
       if(tx.outputs !== undefined && tx.outputs.length > 0){
-        tx.outputs.map((out,id)=>{
+        tx.outputs.map(out=>{
           if(address === out.address)
             totalOutputs += out.value
+          return totalOutputs
         })
       }
 
       if(tx.inputs !== undefined && tx.inputs.length > 0){
-        tx.inputs.map((input,id)=>{
+        tx.inputs.map(input=>{
           if(address === input.address)
             totalInputs += input.value
+          return totalInputs
         })
       }
 
@@ -64,4 +69,16 @@ export default class Transactions extends Component {
       </div>
     )
   }
+}
+
+Transactions.propTypes = {
+  address : Proptypes.string,
+  txs : Proptypes.array,
+  onScroll : Proptypes.func
+}
+Transactions.defaultProps = {
+  address : "",
+  txs : [],
+  onScroll : e=>e
+
 }

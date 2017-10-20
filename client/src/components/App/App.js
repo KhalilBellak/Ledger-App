@@ -1,6 +1,7 @@
 //React
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom';
+import Proptypes from 'prop-types'
 //Components
 import Chooser from '../Chooser/Chooser'
 import Transactions from '../Transactions/Transactions'
@@ -178,7 +179,7 @@ export default class App extends Component {
   goTopTable(){
 
     const store = this.props.store
-    const { goTopButtonOn, intervalIds} = store.getState()
+    const { goTopButtonOn} = store.getState()
 
     if(goTopButtonOn){
       const intervalId = setInterval(this.scrollByStep,C.scrollTopTick)
@@ -192,7 +193,7 @@ export default class App extends Component {
 
     const store = this.props.store
     const { intervalIds } = store.getState()
-    const state = store.getState()
+
     let tableNode = ReactDOM.findDOMNode(this.refs._txs)
     const scrollY = tableNode.scrollTop
 
@@ -221,8 +222,7 @@ export default class App extends Component {
       txs,
       balance,
       error,
-      goTopButtonOn,
-      intervalIds
+      goTopButtonOn
     } = store.getState()
 
     const isFailed = (error !== null)
@@ -260,5 +260,8 @@ export default class App extends Component {
           </div>
     )
   }
+}
 
+App.propTypes = {
+  store : Proptypes.object.isRequired
 }

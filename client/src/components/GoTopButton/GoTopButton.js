@@ -1,4 +1,7 @@
+//React
 import React from 'react'
+import Proptypes from 'prop-types'
+//Styles
 import './GoTopButton.css'
 
 /*
@@ -12,3 +15,10 @@ const GoTopButton = ({onGoTop})=>(
 )
 
 export default GoTopButton
+
+GoTopButton.propTypes = {
+  onGoTop : Proptypes.func
+}
+GoTopButton.defaultProps = {
+  onGoTop : e=>e
+}
