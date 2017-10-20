@@ -26,7 +26,7 @@ npm install
 Run server on localhost:3001/
 
 ```
-node serve.js
+node server.js
 ```
 
 ## Client
