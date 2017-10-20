@@ -18,7 +18,6 @@ export default class Chooser extends Component {
     e : event
   */
   changeMode(e){
-    const { mode } = this.props
     e.preventDefault()
     const id = e.target.id
     let newMode = (id === "txs")?"transactions":"balance"

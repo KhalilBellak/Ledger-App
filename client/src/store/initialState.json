@@ -10,5 +10,5 @@
   "error" : null,
   "goTopButtonOn" : false,
   "goTop" : false,
-  "intervalId" : -1
+  "intervalIds" : []
 }

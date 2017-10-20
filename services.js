@@ -7,6 +7,9 @@ const proxiedURL = `${apiConfig.proxy}/${url}`
 
 /*
   QuickSort by date (received_at property) in case received txs not sorted ascendant (from old to new)
+  txs : transactions to sort
+  start : index where to start sort
+  end : index where to end sort
 */
 const sortByDate = (txs,start,end)=>{
 	if(txs.length - 1 < start || start < 0 || txs.length - 1 < end || end < 0)
@@ -51,7 +54,9 @@ const sortByDate = (txs,start,end)=>{
 	}
 
 }
-
+/*
+  Method to send formated txs object as a response to client
+*/
 const getTxs = (res,txs,hash,truncated)=>{
  response = {
 	 txs : txs,
@@ -60,7 +65,9 @@ const getTxs = (res,txs,hash,truncated)=>{
  }
  res.json(response)
 }
-
+/*
+  Method to send balance to client
+*/
 const getBalance = (res,txs,hash,truncated,btcAddress,balance)=>{
 
   let localBalance = 0
@@ -77,12 +84,19 @@ const getBalance = (res,txs,hash,truncated,btcAddress,balance)=>{
 
 		res.json({balance : localBalance, truncated, hash})
 }
+/*
+  Request
+  req : sent client's request
+  res : response to send to client
+  next : function to call when getting response
+*/
 const requestWithOptions = (req, res, next)=>{
 
 	let btcAddress = req.params.btcAddress
 	let blockHash = req.query.blockHash
   let balance = req.query.balance
 
+  //First we ask for a token
 	var tokenReqOptions = {
 		method: 'GET',
 		uri: `${url}/${apiConfig.token}`,
@@ -92,6 +106,7 @@ const requestWithOptions = (req, res, next)=>{
 	rp(tokenReqOptions)
 	.then(response=>{
 
+       //Then request trqnsaction/balance (and including hash if it exists)
 			 let uri = `${url}/addresses/${btcAddress}/transactions`
 			 let realUri = (blockHash !== undefined && blockHash.length > 0)?`${uri}?blockHash=${blockHash}`:uri
 
@@ -123,6 +138,7 @@ const requestWithOptions = (req, res, next)=>{
 									})
 								)
 
+             //In case the API of transactions' browser gives not sorted txs, otherwise we can just reverse txs
 						 sortByDate(formatedTxs,0,formatedTxs.length - 1)
 
 							const block = formatedTxs[0].block

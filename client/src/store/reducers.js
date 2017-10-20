@@ -60,7 +60,7 @@ export const dataReducer = (state = {}, action) => {
           ...state,
           goTop : true,
           goTopButtonOn : false,
-          intervalId : action.intervalId
+          intervalIds : state.intervalIds.concat([action.intervalId])
         }
     default:
       return state

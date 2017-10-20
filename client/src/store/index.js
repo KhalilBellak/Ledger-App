@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware } from 'redux'
 import { dataReducer } from './reducers'
 
-var dumpLogs = false
+var dumpLogs = true
 
 /*
   Useful middleware to log action, state before and after action dispatch

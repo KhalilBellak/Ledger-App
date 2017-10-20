@@ -176,10 +176,14 @@ export default class App extends Component {
     Helps to scroll Transactions to top
   */
   goTopTable(){
-    const store = this.props.store
 
-    const intervalId = setInterval(this.scrollByStep,C.scrollTopTick)
-    store.dispatch(goTop(intervalId))
+    const store = this.props.store
+    const { goTopButtonOn, intervalIds} = store.getState()
+
+    if(goTopButtonOn){
+      const intervalId = setInterval(this.scrollByStep,C.scrollTopTick)
+      store.dispatch(goTop(intervalId))
+    }
   }
   /*
     Fired by setInterval to have a smooth scroll
@@ -187,6 +191,8 @@ export default class App extends Component {
   scrollByStep(){
 
     const store = this.props.store
+    const { intervalIds } = store.getState()
+    const state = store.getState()
     let tableNode = ReactDOM.findDOMNode(this.refs._txs)
     const scrollY = tableNode.scrollTop
 
@@ -194,9 +200,14 @@ export default class App extends Component {
       const step = (scrollY*C.scrollTopTick)/C.scrollTopDuration
       tableNode.scrollTop = (scrollY > step)?(scrollY - step):0
     }else{
-      clearInterval(store.getState().intervalId)
+      /*
+        When we are on top, we clear all intervals, happens when we
+        "multi-tap" before scroll finishing (i.e. button disapearing)
+      */
+      if(intervalIds !== undefined && intervalIds.length > 0){
+          intervalIds.map(intervalId=>clearInterval(intervalId))
+      }
     }
-
   }
 
   render() {
@@ -211,7 +222,7 @@ export default class App extends Component {
       balance,
       error,
       goTopButtonOn,
-      goTop
+      intervalIds
     } = store.getState()
 
     const isFailed = (error !== null)

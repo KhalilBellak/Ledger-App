@@ -15,18 +15,17 @@ const generateTxsRows = (address,txs)=>{
     (txs.length > 0)?
     txs.map((tx,index)=>{
 
-      let outputs, inputs
       let totalOutputs = 0, totalInputs = 0
 
       if(tx.outputs !== undefined && tx.outputs.length > 0){
-        outputs = tx.outputs.map((out,id)=>{
+        tx.outputs.map((out,id)=>{
           if(address === out.address)
             totalOutputs += out.value
         })
       }
 
       if(tx.inputs !== undefined && tx.inputs.length > 0){
-        inputs = tx.inputs.map((input,id)=>{
+        tx.inputs.map((input,id)=>{
           if(address === input.address)
             totalInputs += input.value
         })
@@ -42,8 +41,6 @@ const generateTxsRows = (address,txs)=>{
             <div className="date">{tx.received_at}</div>
           </div>
           <div id={idAmount} className="details">{amount}</div>
-          {outputs}
-          {inputs}
         </li>
       )
     }):<div></div>
