@@ -10,6 +10,7 @@ const constants = {
     GOTOP : "GOTOP"
   },
   scrollTopTick : 20,
-  scrollTopDuration : 150
+  scrollTopDuration : 50,
+  error : new Error("Check your Bitcoin's address and that server is running!")
 }
 export default constants

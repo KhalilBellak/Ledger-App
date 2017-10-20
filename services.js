@@ -4,7 +4,7 @@ var colors = require('colors');
 
 const url = `${apiConfig.url}/${apiConfig.version}/${apiConfig.bitcoinAlias}`
 const proxiedURL = `${apiConfig.proxy}/${url}`
-
+const urlToken = `${url}/${apiConfig.token}`
 /*
   QuickSort by date (received_at property) in case received txs not sorted ascendant (from old to new)
   txs : transactions to sort
@@ -96,36 +96,35 @@ const requestWithOptions = (req, res, next)=>{
 	let blockHash = req.query.blockHash
   let balance = req.query.balance
 
+
   //First we ask for a token
-	var tokenReqOptions = {
+	const tokenReqOptions = {
 		method: 'GET',
-		uri: `${url}/${apiConfig.token}`,
+		uri: urlToken,
 		json: true
-	};
+	}
 
 	rp(tokenReqOptions)
 	.then(response=>{
-
+        console.log(colors.blue(`Token successfully retrieved : ${response.token}`))
        //Then request trqnsaction/balance (and including hash if it exists)
 			 let uri = `${url}/addresses/${btcAddress}/transactions`
 			 let realUri = (blockHash !== undefined && blockHash.length > 0)?`${uri}?blockHash=${blockHash}`:uri
 
-			 var txsReqOption = {
+			 const txsReqOption = {
 				 method: 'GET',
 				 uri: realUri,
 				 headers: {
 					 "X-LedgerWallet-SyncToken":`${response.token}`
 				 },
 				 json: true
-			 };
+			 }
 
 			 rp(txsReqOption)
 					.then(result=>{
-
+            let error
 						let txs = result.txs
 						const length = txs.length
-
-						let response
 
 						if(length > 0){
 
@@ -148,7 +147,32 @@ const requestWithOptions = (req, res, next)=>{
 
 							next(res,formatedTxs,hash,result.truncated,btcAddress,iBalance)
 						}
+            else{
+              error = new Error("Bitcoin's address is invalid or has no transactions !")
+              //res.json({error : new Error("Bitcoin's address is invalid or has no transactions !")})
+            }
+            return error
 					})
+          .then(error=>{
+
+              const deleteTokenReqOption = {
+                 method: 'DELETE',
+                 uri: urlToken,
+                 headers: {
+                   "X-LedgerWallet-SyncToken":`${response.token}`
+                 },
+                 json: true
+               }
+                rp(deleteTokenReqOption)
+                  .then(result=>{console.log(colors.blue(`${result.success}`))})
+                   .catch(e=>console.log(colors.red(e.message)))
+
+              if(error !== undefined){
+                res.send()
+                throw error
+              }
+
+          })
 					.catch(e=>console.log(colors.red(e.message)))
 	})
 	.catch(e=>console.log(colors.red(e.message)))

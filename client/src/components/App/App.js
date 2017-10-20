@@ -118,7 +118,7 @@ export default class App extends Component {
           }
         }
       })
-      .catch(e => this.props.store.dispatch(showError(e)))
+      .catch(() => this.props.store.dispatch(showError(C.error)))
   }
   /*
     Triggered by Chooser component when changing mode
@@ -147,7 +147,6 @@ export default class App extends Component {
     }))
 
     if (toFetch) {
-
       this.fetchWithMode(address, txs, selectedMode)
     }
 
